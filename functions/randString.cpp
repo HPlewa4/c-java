@@ -22,6 +22,3 @@ string generateRandomString(int length) {
     return result;
 }
 
-int main() {
-    return 0;
-}

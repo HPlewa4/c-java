@@ -13,9 +13,3 @@ void generateFibonacci(int fib[], int n) {
         fib[i] = fib[i - 1] + fib[i - 2];
     }
 }
-
-int main() {
-
-
-    return 0;
-}
