@@ -15,6 +15,22 @@ extern "C" {
 JNIEXPORT jint JNICALL Java_Bridge_cppNextPrime
   (JNIEnv *, jobject, jint);
 
+/*
+ * Class:     Bridge
+ * Method:    cppGenerateRandomString
+ * Signature: (I)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_Bridge_cppGenerateRandomString
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     Bridge
+ * Method:    cppGenerateFibonacci
+ * Signature: (I)[I
+ */
+JNIEXPORT jintArray JNICALL Java_Bridge_cppGenerateFibonacci
+  (JNIEnv *, jobject, jint);
+
 #ifdef __cplusplus
 }
 #endif
