@@ -1,0 +1,29 @@
+✅ 2️⃣ (Optional) Recompile the native C++ library
+
+If you haven’t built libbridge.so yet (or recently edited bridge.cpp), run this:
+
+g++ -fPIC -shared bridge.cpp -o libbridge.so \
+    -I/usr/lib/jvm/java-17-openjdk-amd64/include \
+    -I/usr/lib/jvm/java-17-openjdk-amd64/include/linux
+
+
+That ensures your .so (shared object) is up to date.
+
+✅ 3️⃣ (Optional) Recompile Java (only if changed)
+
+If you changed your Java code, do:
+
+javac Bridge.java
+
+✅ 4️⃣ Run the program
+
+Now execute:
+
+java -Djava.library.path=. Bridge
+
+
+👉 Explanation:
+
+-Djava.library.path=. tells Java to look in the current folder for your native .so file.
+
+Bridge is your main Java class.
