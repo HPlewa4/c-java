@@ -1,0 +1,15 @@
+**/build/
+**/bin/
+*.o
+*.out
+*.class
+.vscode/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.DS_Store
+Thumbs.db
+*.swp
+*~
