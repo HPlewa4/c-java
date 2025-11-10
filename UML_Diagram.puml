@@ -1,0 +1,262 @@
+@startuml Image Classifier UML Diagram
+
+' Title and Team Info
+title Image Classifier System - UML Class Diagram
+note top : Group Members: [Your Names Here]
+
+' ========== C++ CLASSES ==========
+
+' 1. NeuralNetwork - Main class with full details
+class NeuralNetwork {
+  - layers : vector<int>
+  - weights : vector<vector<vector<double>>>
+  - biases : vector<vector<double>>
+  - learning_rate : double
+  - activation : unique_ptr<ActivationFunction>
+  - training_mutex : mutex
+  - sigmoid(x: double) : double
+  - sigmoid_derivative(x: double) : double
+  - softmax(x: vector<double>) : vector<double>
+  + NeuralNetwork(layer_sizes: vector<int>, lr: double, act_type: ActivationType)
+  + ~NeuralNetwork()
+  + forward(input: vector<double>) : vector<double>
+  + train(input: vector<double>, target: vector<double>) : void
+  + train_batch(inputs: vector<vector<double>>, targets: vector<vector<double>>, epochs: int) : void
+  + train_batch_parallel(inputs: vector<vector<double>>, targets: vector<vector<double>>, epochs: int, num_threads: int) : void
+  + save(filename: string) : void
+  + load(filename: string) : void
+  + predict_class(input: vector<double>) : int
+  + getActivationType() : ActivationType
+}
+
+' 2. ActivationFunction - Abstract base class (polymorphism)
+abstract class ActivationFunction {
+  + {abstract} activate(x: double) : double
+  + {abstract} derivative(x: double) : double
+  + {abstract} getType() : ActivationType
+}
+
+' 3. SigmoidActivation - Concrete implementation
+class SigmoidActivation {
+  + activate(x: double) : double
+  + derivative(x: double) : double
+  + getType() : ActivationType
+}
+
+' 4. ReLUActivation - Concrete implementation
+class ReLUActivation {
+  + activate(x: double) : double
+  + derivative(x: double) : double
+  + getType() : ActivationType
+}
+
+' 5. TanhActivation - Concrete implementation
+class TanhActivation {
+  + activate(x: double) : double
+  + derivative(x: double) : double
+  + getType() : ActivationType
+}
+
+' 6. ActivationFactory - Factory pattern
+class ActivationFactory {
+  + {static} create(type: ActivationType) : unique_ptr<ActivationFunction>
+}
+
+' 7. DataBuffer - Generic template class with full details
+class "DataBuffer<T>" as DataBuffer {
+  - data : vector<T>
+  - max_size : size_t
+  + DataBuffer(max: size_t)
+  + add(item: T) : void
+  + get(idx: size_t) : T
+  + size() : size_t
+  + clear() : void
+  + empty() : bool
+  + getData() : vector<T>
+  + findMin() : T
+  + findMax() : T
+  + countIf(pred: Predicate) : size_t
+}
+
+' 8. Matrix - Generic template class with full details
+class "Matrix<T>" as Matrix {
+  - data : vector<vector<T>>
+  - rows : size_t
+  - cols : size_t
+  + Matrix(r: size_t, c: size_t, init_val: T)
+  + getRows() : size_t
+  + getCols() : size_t
+  + operator[](row: size_t) : vector<T>
+  + operator+(other: Matrix<T>) : Matrix<T>
+  + operator-(other: Matrix<T>) : Matrix<T>
+  + operator*(scalar: T) : Matrix<T>
+  + transpose() : Matrix<T>
+}
+
+' Enum
+enum ActivationType {
+  SIGMOID
+  RELU
+  TANH
+  SOFTMAX
+  LINEAR
+}
+
+' ========== JAVA CLASSES ==========
+
+' 9. ImageClassifierUI - Main UI class with full details
+class ImageClassifierUI {
+  - imageLabel : JLabel
+  - resultsArea : JTextArea
+  - statusLabel : JLabel
+  - selectedFile : File
+  - currentImage : BufferedImage
+  - client : ImageClassifierClient
+  - resultsCache : Cache<String, ClassificationResult>
+  - executorService : ExecutorService
+  - currentStatus : ClassificationStatus
+  - {static} LOG_FILE : String
+  + ImageClassifierUI()
+  - setupUI() : void
+  - checkServerHealth() : void
+  - selectImage() : void
+  - displayImage(img: BufferedImage) : void
+  - applyImageProcessing() : void
+  - classifyImage() : void
+  - parseResults(json: String) : ClassificationResult
+  - displayResults(result: ClassificationResult) : void
+  - updateStatus(status: ClassificationStatus) : void
+  - logResultToFile(filename: String, result: ClassificationResult) : void
+  - saveResultsToFile() : void
+  - cleanup() : void
+  + {static} main(args: String[]) : void
+}
+
+' 10. ImageProcessor - Interface (polymorphism)
+interface ImageProcessor {
+  + {abstract} process(image: BufferedImage) : BufferedImage
+  + {abstract} getProcessorName() : String
+}
+
+' 11. GrayscaleProcessor - Implementation
+class GrayscaleProcessor {
+  + process(image: BufferedImage) : BufferedImage
+  + getProcessorName() : String
+}
+
+' 12. ResizeProcessor - Implementation
+class ResizeProcessor {
+  - targetWidth : int
+  - targetHeight : int
+  + ResizeProcessor(width: int, height: int)
+  + process(image: BufferedImage) : BufferedImage
+  + getProcessorName() : String
+}
+
+' 13. BrightnessProcessor - Implementation
+class BrightnessProcessor {
+  - factor : float
+  + BrightnessProcessor(brightnessFactor: float)
+  + process(image: BufferedImage) : BufferedImage
+  + getProcessorName() : String
+}
+
+' 14. NetworkClient - Abstract base class
+abstract class NetworkClient {
+  # serverUrl : String
+  # timeout : int
+  + NetworkClient(serverUrl: String, timeout: int)
+  + {abstract} sendRequest(data: byte[]) : String
+  # createConnection(endpoint: String) : HttpURLConnection
+  # readResponse(inputStream: InputStream) : String
+}
+
+' 15. ImageClassifierClient - Concrete implementation
+class ImageClassifierClient {
+  + ImageClassifierClient(serverUrl: String, timeout: int)
+  + sendRequest(data: byte[]) : String
+  + checkHealth() : boolean
+}
+
+' 16. Cache - Generic class
+class "Cache<K,V>" as Cache {
+  - cache : Map<K, V>
+  - maxSize : int
+  + Cache(maxSize: int)
+  + put(key: K, value: V) : void
+  + get(key: K) : V
+  + contains(key: K) : boolean
+  + clear() : void
+  + size() : int
+  + getAllValues() : List<V>
+}
+
+' 17. ClassificationResult - Data class
+class ClassificationResult {
+  - predictions : List<Prediction>
+  - status : ClassificationStatus
+  - timestamp : long
+  + ClassificationResult()
+  + addPrediction(className: String, confidence: double, classId: int) : void
+  + getPredictions() : List<Prediction>
+  + setStatus(status: ClassificationStatus) : void
+  + getStatus() : ClassificationStatus
+  + getTimestamp() : long
+}
+
+' Inner class
+class Prediction {
+  - className : String
+  - confidence : double
+  - classId : int
+  + Prediction(className: String, confidence: double, classId: int)
+  + getClassName() : String
+  + getConfidence() : double
+  + getClassId() : int
+  + toString() : String
+}
+
+' Enum
+enum ClassificationStatus {
+  IDLE
+  PROCESSING
+  SUCCESS
+  ERROR
+  NO_IMAGE
+  + getMessage() : String
+}
+
+' ========== RELATIONSHIPS ==========
+
+' Inheritance relationships (C++)
+ActivationFunction <|-- SigmoidActivation
+ActivationFunction <|-- ReLUActivation
+ActivationFunction <|-- TanhActivation
+
+' Inheritance relationships (Java)
+ImageProcessor <|.. GrayscaleProcessor
+ImageProcessor <|.. ResizeProcessor
+ImageProcessor <|.. BrightnessProcessor
+NetworkClient <|-- ImageClassifierClient
+
+' Composition (strong ownership)
+NeuralNetwork *-- ActivationFunction : owns
+ImageClassifierUI *-- Cache : owns
+ImageClassifierUI *-- ImageClassifierClient : owns
+
+' Aggregation (weak relationship)
+ImageClassifierUI o-- ClassificationResult : uses
+ClassificationResult o-- Prediction : contains
+ClassificationResult o-- ClassificationStatus : has
+
+' Dependency (uses)
+NeuralNetwork ..> ActivationType : uses
+ActivationFactory ..> ActivationFunction : creates
+ActivationFactory ..> ActivationType : uses
+ImageClassifierUI ..> ImageProcessor : uses
+Cache ..> ClassificationResult : stores
+
+' Association
+ClassificationResult -- Prediction : contains
+
+@enduml

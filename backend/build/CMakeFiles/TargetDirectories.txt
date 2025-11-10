@@ -1,0 +1,5 @@
+/Users/lukasz/Code/University/c-java/backend/build/CMakeFiles/train.dir
+/Users/lukasz/Code/University/c-java/backend/build/CMakeFiles/server.dir
+/Users/lukasz/Code/University/c-java/backend/build/CMakeFiles/test_neural_network.dir
+/Users/lukasz/Code/University/c-java/backend/build/CMakeFiles/edit_cache.dir
+/Users/lukasz/Code/University/c-java/backend/build/CMakeFiles/rebuild_cache.dir
