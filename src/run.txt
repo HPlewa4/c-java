@@ -1,0 +1,2 @@
+javac -d out src/ui/MLAppUI.java src/ui/utils/UIStyles.java src/ui/panels/*.java
+java -cp out src.ui.MLAppUI
