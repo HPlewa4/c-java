@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cd frontend
 set -e
 
 mkdir -p out
