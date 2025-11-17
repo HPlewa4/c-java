@@ -1,8 +1,8 @@
-@startuml Image Classifier UML Diagram
+@startuml
 
 ' Title and Team Info
 title Image Classifier System - UML Class Diagram
-note top : Group Members: [Your Names Here]
+note "Group Members: [Your Names Here]" as GroupNote
 
 ' ========== C++ CLASSES ==========
 
@@ -18,7 +18,7 @@ class NeuralNetwork {
   - sigmoid_derivative(x: double) : double
   - softmax(x: vector<double>) : vector<double>
   + NeuralNetwork(layer_sizes: vector<int>, lr: double, act_type: ActivationType)
-  + ~NeuralNetwork()
+  + \~NeuralNetwork()
   + forward(input: vector<double>) : vector<double>
   + train(input: vector<double>, target: vector<double>) : void
   + train_batch(inputs: vector<vector<double>>, targets: vector<vector<double>>, epochs: int) : void
@@ -31,9 +31,9 @@ class NeuralNetwork {
 
 ' 2. ActivationFunction - Abstract base class (polymorphism)
 abstract class ActivationFunction {
-  + {abstract} activate(x: double) : double
-  + {abstract} derivative(x: double) : double
-  + {abstract} getType() : ActivationType
+  + activate(x: double) : double
+  + derivative(x: double) : double
+  + getType() : ActivationType
 }
 
 ' 3. SigmoidActivation - Concrete implementation
@@ -59,7 +59,7 @@ class TanhActivation {
 
 ' 6. ActivationFactory - Factory pattern
 class ActivationFactory {
-  + {static} create(type: ActivationType) : unique_ptr<ActivationFunction>
+  {static} create(type: ActivationType) : unique_ptr<ActivationFunction>
 }
 
 ' 7. DataBuffer - Generic template class with full details
@@ -115,7 +115,7 @@ class ImageClassifierUI {
   - resultsCache : Cache<String, ClassificationResult>
   - executorService : ExecutorService
   - currentStatus : ClassificationStatus
-  - {static} LOG_FILE : String
+  {static} LOG_FILE : String
   + ImageClassifierUI()
   - setupUI() : void
   - checkServerHealth() : void
@@ -129,13 +129,13 @@ class ImageClassifierUI {
   - logResultToFile(filename: String, result: ClassificationResult) : void
   - saveResultsToFile() : void
   - cleanup() : void
-  + {static} main(args: String[]) : void
+  {static} main(args: String[]) : void
 }
 
 ' 10. ImageProcessor - Interface (polymorphism)
 interface ImageProcessor {
-  + {abstract} process(image: BufferedImage) : BufferedImage
-  + {abstract} getProcessorName() : String
+  + process(image: BufferedImage) : BufferedImage
+  + getProcessorName() : String
 }
 
 ' 11. GrayscaleProcessor - Implementation
@@ -166,7 +166,7 @@ abstract class NetworkClient {
   # serverUrl : String
   # timeout : int
   + NetworkClient(serverUrl: String, timeout: int)
-  + {abstract} sendRequest(data: byte[]) : String
+  + sendRequest(data: byte[]) : String
   # createConnection(endpoint: String) : HttpURLConnection
   # readResponse(inputStream: InputStream) : String
 }
@@ -223,7 +223,6 @@ enum ClassificationStatus {
   SUCCESS
   ERROR
   NO_IMAGE
-  + getMessage() : String
 }
 
 ' ========== RELATIONSHIPS ==========
