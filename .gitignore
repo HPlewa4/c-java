@@ -13,3 +13,5 @@
 Thumbs.db
 *.swp
 *~
+backend/src/dataset/data
+backend/src/dataset/data.zip

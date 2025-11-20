@@ -5,10 +5,23 @@
 #include <fstream>
 #include <sstream>
 #include <cstring>
+#include <csignal>
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
 
 std::vector<std::string> class_names;
 NeuralNetwork* nn = nullptr;
 int IMG_SIZE = 32;
+std::atomic<bool> keep_running(true);
+std::condition_variable shutdown_cv;
+std::mutex shutdown_mutex;
+
+void handle_signal(int) {
+    if (keep_running.exchange(false)) {
+        shutdown_cv.notify_one();
+    }
+}
 
 std::vector<double> image_to_vector(const cv::Mat& img) {
     cv::Mat resized, gray;
@@ -129,6 +142,9 @@ int main(int argc, char* argv[]) {
     std::string classes_file = "../models/classes.txt";
     int port = 8080;
     
+    std::signal(SIGINT, handle_signal);
+    std::signal(SIGTERM, handle_signal);
+
     if (argc > 1) model_file = argv[1];
     if (argc > 2) classes_file = argv[2];
     if (argc > 3) port = std::atoi(argv[3]);
@@ -167,9 +183,12 @@ int main(int argc, char* argv[]) {
     std::cout << "Endpoints:" << std::endl;
     std::cout << "  GET  /health   - Health check" << std::endl;
     std::cout << "  POST /classify - Classify image" << std::endl;
-    std::cout << "\nPress Enter to stop server and exit..." << std::endl;
+    std::cout << "\nAwaiting shutdown signal (Ctrl+C or docker stop)..." << std::endl;
 
-    getchar();
+    {
+        std::unique_lock<std::mutex> lock(shutdown_mutex);
+        shutdown_cv.wait(lock, [] { return !keep_running.load(); });
+    }
 
     std::cout << "Shutting down server..." << std::endl;
     MHD_stop_daemon(daemon);

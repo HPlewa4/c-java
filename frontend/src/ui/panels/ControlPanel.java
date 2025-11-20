@@ -10,9 +10,8 @@ public class ControlPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(UIStyles.BG_LIGHTER);
         setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 0, 2, UIStyles.BORDER_COLOR),
-            BorderFactory.createEmptyBorder(20, 15, 20, 15)
-        ));
+                BorderFactory.createMatteBorder(0, 0, 0, 2, UIStyles.BORDER_COLOR),
+                BorderFactory.createEmptyBorder(20, 15, 20, 15)));
         setPreferredSize(new Dimension(220, 0));
 
         JLabel title = new JLabel("Controls");
@@ -34,9 +33,8 @@ public class ControlPanel extends JPanel {
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setBackground(UIStyles.BG_DARK);
         infoPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(UIStyles.BORDER_COLOR, 1),
-            BorderFactory.createEmptyBorder(15, 10, 15, 10)
-        ));
+                BorderFactory.createLineBorder(UIStyles.BORDER_COLOR, 1),
+                BorderFactory.createEmptyBorder(15, 10, 15, 10)));
         infoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel infoTitle = new JLabel("Instructions");
@@ -44,11 +42,10 @@ public class ControlPanel extends JPanel {
         infoTitle.setForeground(UIStyles.ACCENT_GREEN);
 
         JTextArea infoText = new JTextArea(
-            "• Draw on canvas\n" +
-            "• Drag & drop images\n" +
-            "• Use file selector\n" +
-            "• Switch between modes"
-        );
+                "- Draw on canvas\n" +
+                        "- Drag & drop images\n" +
+                        "- Use file selector\n" +
+                        "- Switch between modes");
         infoText.setEditable(false);
         infoText.setBackground(UIStyles.BG_DARK);
         infoText.setForeground(UIStyles.TEXT_COLOR);
@@ -75,9 +72,14 @@ public class ControlPanel extends JPanel {
 
         btn.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseEntered(MouseEvent e) { btn.setBackground(color.brighter()); }
+            public void mouseEntered(MouseEvent e) {
+                btn.setBackground(color.brighter());
+            }
+
             @Override
-            public void mouseExited(MouseEvent e) { btn.setBackground(color); }
+            public void mouseExited(MouseEvent e) {
+                btn.setBackground(color);
+            }
         });
         return btn;
     }
