@@ -1,0 +1,3 @@
+# This directory is mounted into the Docker container for file uploads
+
+# Place your image files here to access them from the Java application

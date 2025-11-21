@@ -1,5 +1,4 @@
 
-
 import src.ui.panels.*;
 import src.ui.utils.UIStyles;
 import javax.swing.*;
@@ -38,9 +37,8 @@ public class MLAppUI extends JFrame {
 
         // Header
         HeaderPanel headerPanel = new HeaderPanel(
-            () -> switchMode("MNIST"),
-            () -> switchMode("CELEB-A")
-        );
+                () -> switchMode("MNIST"),
+                () -> switchMode("CELEB-A"));
         add(headerPanel, BorderLayout.NORTH);
 
         // Center layout
@@ -49,10 +47,9 @@ public class MLAppUI extends JFrame {
 
         // Controls
         ControlPanel controlPanel = new ControlPanel(
-            this::clearCanvas,
-            this::selectFile,
-            this::processImage
-        );
+                this::clearCanvas,
+                this::selectFile,
+                this::processImage);
         centerPanel.add(controlPanel, BorderLayout.WEST);
 
         // Canvas
@@ -92,8 +89,19 @@ public class MLAppUI extends JFrame {
 
     private void selectFile() {
         JFileChooser fileChooser = new JFileChooser();
+
+        // Set default directory to mounted volumes
+        File uploadDir = new File("/app/uploads");
+        File downloadsDir = new File("/app/downloads");
+
+        if (uploadDir.exists()) {
+            fileChooser.setCurrentDirectory(uploadDir);
+        } else if (downloadsDir.exists()) {
+            fileChooser.setCurrentDirectory(downloadsDir);
+        }
+
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-            "Image files", "jpg", "jpeg", "png", "bmp", "gif"));
+                "Image files", "jpg", "jpeg", "png", "bmp", "gif"));
 
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
@@ -117,8 +125,8 @@ public class MLAppUI extends JFrame {
     private void processImage() {
         statusPanel.setStatus("Processing image with " + currentMode + " model...");
         JOptionPane.showMessageDialog(this,
-            "Image processing with " + currentMode + " model will be implemented here.",
-            "Process Image", JOptionPane.INFORMATION_MESSAGE);
+                "Image processing with " + currentMode + " model will be implemented here.",
+                "Process Image", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static void main(String[] args) {
