@@ -91,13 +91,13 @@ public class MLAppUI extends JFrame {
         JFileChooser fileChooser = new JFileChooser();
 
         // Set default directory to mounted volumes
+        File homeDir = new File("/app/home");
         File uploadDir = new File("/app/uploads");
-        File downloadsDir = new File("/app/downloads");
 
-        if (uploadDir.exists()) {
+        if (homeDir.exists()) {
+            fileChooser.setCurrentDirectory(homeDir);
+        } else if (uploadDir.exists()) {
             fileChooser.setCurrentDirectory(uploadDir);
-        } else if (downloadsDir.exists()) {
-            fileChooser.setCurrentDirectory(downloadsDir);
         }
 
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(

@@ -25,6 +25,9 @@ services:
       - VNC_PORT=5900
       - NOVNC_PORT=6080
       - BACKEND_URL=http://backend:8080
+    volumes:
+      - ./frontend/uploads:/app/uploads
+      - ~/:/app/home:ro
     networks:
       - ml_net
     restart: unless-stopped
