@@ -123,11 +123,55 @@ public class MLAppUI extends JFrame {
     }
 
     private void processImage() {
-        statusPanel.setStatus("Processing image with " + currentMode + " model...");
-        JOptionPane.showMessageDialog(this,
-                "Image processing with " + currentMode + " model will be implemented here.",
-                "Process Image", JOptionPane.INFORMATION_MESSAGE);
+        statusPanel.setStatus("Contacting backend...");
+
+        new Thread(() -> {
+            String response = callHealthEndpoint();
+
+            SwingUtilities.invokeLater(() -> {
+                statusPanel.setStatus("Backend Response: " + response);
+            });
+        }).start();
     }
+
+    
+    private String callHealthEndpoint() {
+        try {
+            java.net.URL url = new java.net.URL("http://c-java-backend-1:8080/health");
+            java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
+
+            int status = conn.getResponseCode();
+
+            java.io.InputStream stream =
+                    (status >= 200 && status < 300)
+                            ? conn.getInputStream()
+                            : conn.getErrorStream();
+
+            java.io.BufferedReader reader = new java.io.BufferedReader(
+                    new java.io.InputStreamReader(stream)
+            );
+
+            StringBuilder response = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+
+            reader.close();
+            conn.disconnect();
+
+            return response.toString();
+
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
