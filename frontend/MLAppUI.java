@@ -156,7 +156,7 @@ public class MLAppUI extends JFrame {
             });
         }).start();
     }
-    */
+    
     private String sendImageToServer(byte[] imgBytes) {
         try {
             java.net.URL url = new java.net.URL("http://c-java-backend-1:8080/classify");
@@ -194,7 +194,7 @@ public class MLAppUI extends JFrame {
             return "Error: " + e.getMessage();
         }
     }
-
+    */
 
     
     private String callHealthEndpoint() {
