@@ -10,11 +10,10 @@ import javax.imageio.ImageIO;
 public class MLAppUI extends JFrame {
     private DrawingPanel drawingCanvas;
     private StatusPanel statusPanel;
-    private String currentMode = "MNIST";
     private JLabel canvasTitle;
 
     public MLAppUI() {
-        setTitle("ML Image Processor - MNIST & CELEB-A");
+        setTitle("Widow's peak detector");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(900, 700);
         setLocationRelativeTo(null);
@@ -36,9 +35,7 @@ public class MLAppUI extends JFrame {
         getContentPane().setBackground(UIStyles.BG_DARK);
 
         // Header
-        HeaderPanel headerPanel = new HeaderPanel(
-                () -> switchMode("MNIST"),
-                () -> switchMode("CELEB-A"));
+        HeaderPanel headerPanel = new HeaderPanel();
         add(headerPanel, BorderLayout.NORTH);
 
         // Center layout
@@ -57,7 +54,7 @@ public class MLAppUI extends JFrame {
         canvasPanel.setBackground(UIStyles.BG_DARK);
         canvasPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        canvasTitle = new JLabel("Drawing Canvas - " + currentMode);
+        canvasTitle = new JLabel("Selected file:");
         canvasTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
         canvasTitle.setForeground(UIStyles.TEXT_COLOR);
         canvasTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
@@ -71,20 +68,14 @@ public class MLAppUI extends JFrame {
         add(centerPanel, BorderLayout.CENTER);
 
         // Status bar
-        statusPanel = new StatusPanel("Ready - Mode: " + currentMode);
+        statusPanel = new StatusPanel("Ready");
         add(statusPanel, BorderLayout.SOUTH);
     }
 
-    private void switchMode(String mode) {
-        currentMode = mode;
-        canvasTitle.setText("Drawing Canvas - " + currentMode);
-        statusPanel.setStatus("Ready - Mode: " + currentMode);
-        clearCanvas();
-    }
 
     private void clearCanvas() {
         drawingCanvas.clearCanvas();
-        statusPanel.setStatus("Canvas cleared - Mode: " + currentMode);
+        statusPanel.setStatus("Canvas cleared");
     }
 
     private void selectFile() {
@@ -123,6 +114,11 @@ public class MLAppUI extends JFrame {
     }
 
     private void processImage() {
+        if (!drawingCanvas.hasImage()) {
+            statusPanel.setStatus("No image uploaded. Please select a file first.");
+            return;
+        }
+
         statusPanel.setStatus("Contacting backend...");
 
         new Thread(() -> {
@@ -133,6 +129,72 @@ public class MLAppUI extends JFrame {
             });
         }).start();
     }
+    /*
+    private void processImage() {
+        if (!drawingCanvas.hasImage()) {
+            statusPanel.setStatus("No image uploaded. Please select a file first.");
+            return;
+        }
+
+        statusPanel.setStatus("Sending image to backend...");
+
+        new Thread(() -> {
+            BufferedImage img = drawingCanvas.getImage();  // You’ll need a getter in DrawingPanel
+            byte[] imgBytes = bufferedImageToBytes(img, "png");
+
+            if (imgBytes == null) {
+                SwingUtilities.invokeLater(() ->
+                    statusPanel.setStatus("Failed to convert image to bytes.")
+                );
+                return;
+            }
+
+            String response = sendImageToServer(imgBytes);
+
+            SwingUtilities.invokeLater(() -> {
+                statusPanel.setStatus("Backend Response: " + response);
+            });
+        }).start();
+    }
+    */
+    private String sendImageToServer(byte[] imgBytes) {
+        try {
+            java.net.URL url = new java.net.URL("http://c-java-backend-1:8080/classify");
+            java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/octet-stream");
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(5000);
+
+            try (java.io.OutputStream os = conn.getOutputStream()) {
+                os.write(imgBytes);
+            }
+
+            int status = conn.getResponseCode();
+            java.io.InputStream stream =
+                    (status >= 200 && status < 300)
+                            ? conn.getInputStream()
+                            : conn.getErrorStream();
+
+            java.io.BufferedReader reader = new java.io.BufferedReader(
+                    new java.io.InputStreamReader(stream)
+            );
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+            conn.disconnect();
+            return response.toString();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error: " + e.getMessage();
+        }
+    }
+
 
     
     private String callHealthEndpoint() {

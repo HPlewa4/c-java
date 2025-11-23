@@ -40,12 +40,12 @@ public class ControlPanel extends JPanel {
         JLabel infoTitle = new JLabel("Instructions");
         infoTitle.setFont(new Font("Segoe UI", Font.BOLD, 13));
         infoTitle.setForeground(UIStyles.ACCENT_GREEN);
+        infoTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JTextArea infoText = new JTextArea(
-                "- Draw on canvas\n" +
-                        "- Drag & drop images\n" +
-                        "- Use file selector\n" +
-                        "- Switch between modes");
+                "- Select image from explorer\n" +
+                "- Process image\n" +
+                "- Read the output\n");
         infoText.setEditable(false);
         infoText.setBackground(UIStyles.BG_DARK);
         infoText.setForeground(UIStyles.TEXT_COLOR);
