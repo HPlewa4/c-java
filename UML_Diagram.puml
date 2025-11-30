@@ -1,12 +1,11 @@
 @startuml
 
-' Title and Team Info
+' Title
 title Image Classifier System - UML Class Diagram
-note "Group Members: [Your Names Here]" as GroupNote
-
+note "Group Members: [Łukasz Kowalski, Hubert Plewa, Wiktor Smura]" as GroupNote
 ' ========== C++ CLASSES ==========
 
-' 1. NeuralNetwork - Main class with full details
+' 1. NeuralNetwork
 class NeuralNetwork {
   - layers : vector<int>
   - weights : vector<vector<vector<double>>>
@@ -18,7 +17,7 @@ class NeuralNetwork {
   - sigmoid_derivative(x: double) : double
   - softmax(x: vector<double>) : vector<double>
   + NeuralNetwork(layer_sizes: vector<int>, lr: double, act_type: ActivationType)
-  + \~NeuralNetwork()
+  + ~NeuralNetwork()
   + forward(input: vector<double>) : vector<double>
   + train(input: vector<double>, target: vector<double>) : void
   + train_batch(inputs: vector<vector<double>>, targets: vector<vector<double>>, epochs: int) : void
@@ -29,40 +28,40 @@ class NeuralNetwork {
   + getActivationType() : ActivationType
 }
 
-' 2. ActivationFunction - Abstract base class (polymorphism)
+' 2. ActivationFunction
 abstract class ActivationFunction {
-  + activate(x: double) : double
-  + derivative(x: double) : double
-  + getType() : ActivationType
+  + {abstract} activate(x: double) : double
+  + {abstract} derivative(x: double) : double
+  + {abstract} getType() : ActivationType
 }
 
-' 3. SigmoidActivation - Concrete implementation
+' 3. SigmoidActivation
 class SigmoidActivation {
   + activate(x: double) : double
   + derivative(x: double) : double
   + getType() : ActivationType
 }
 
-' 4. ReLUActivation - Concrete implementation
+' 4. ReLUActivation
 class ReLUActivation {
   + activate(x: double) : double
   + derivative(x: double) : double
   + getType() : ActivationType
 }
 
-' 5. TanhActivation - Concrete implementation
+' 5. TanhActivation
 class TanhActivation {
   + activate(x: double) : double
   + derivative(x: double) : double
   + getType() : ActivationType
 }
 
-' 6. ActivationFactory - Factory pattern
+' 6. ActivationFactory
 class ActivationFactory {
-  {static} create(type: ActivationType) : unique_ptr<ActivationFunction>
+  {static} + create(type: ActivationType) : unique_ptr<ActivationFunction>
 }
 
-' 7. DataBuffer - Generic template class with full details
+' 7. DataBuffer
 class "DataBuffer<T>" as DataBuffer {
   - data : vector<T>
   - max_size : size_t
@@ -78,7 +77,7 @@ class "DataBuffer<T>" as DataBuffer {
   + countIf(pred: Predicate) : size_t
 }
 
-' 8. Matrix - Generic template class with full details
+' 8. Matrix
 class "Matrix<T>" as Matrix {
   - data : vector<vector<T>>
   - rows : size_t
@@ -104,158 +103,80 @@ enum ActivationType {
 
 ' ========== JAVA CLASSES ==========
 
-' 9. ImageClassifierUI - Main UI class with full details
-class ImageClassifierUI {
-  - imageLabel : JLabel
-  - resultsArea : JTextArea
+' 9. MLAppUI - Main Frame
+class MLAppUI {
+  - drawingCanvas : DrawingPanel
+  - statusPanel : StatusPanel
+  - canvasTitle : JLabel
+  + MLAppUI()
+  - initComponents() : void
+  - clearCanvas() : void
+  - selectFile() : void
+  - loadImage(file: File) : void
+  - processImage() : void
+  - callHealthEndpoint() : String
+  {static} + main(args: String[]) : void
+}
+
+' 10. DrawingPanel
+class DrawingPanel {
+  - canvasImage : BufferedImage
+  + DrawingPanel()
+  # paintComponent(g: Graphics) : void
+  + loadImage(img: BufferedImage) : void
+  + getImage() : BufferedImage
+  + clearCanvas() : void
+  + hasImage() : boolean
+}
+
+' 11. ControlPanel
+class ControlPanel {
+  + ControlPanel(clearAction: Runnable, selectFileAction: Runnable, processAction: Runnable)
+  - createButton(text: String, color: Color, action: Runnable) : JButton
+}
+
+' 12. StatusPanel
+class StatusPanel {
   - statusLabel : JLabel
-  - selectedFile : File
-  - currentImage : BufferedImage
-  - client : ImageClassifierClient
-  - resultsCache : Cache<String, ClassificationResult>
-  - executorService : ExecutorService
-  - currentStatus : ClassificationStatus
-  {static} LOG_FILE : String
-  + ImageClassifierUI()
-  - setupUI() : void
-  - checkServerHealth() : void
-  - selectImage() : void
-  - displayImage(img: BufferedImage) : void
-  - applyImageProcessing() : void
-  - classifyImage() : void
-  - parseResults(json: String) : ClassificationResult
-  - displayResults(result: ClassificationResult) : void
-  - updateStatus(status: ClassificationStatus) : void
-  - logResultToFile(filename: String, result: ClassificationResult) : void
-  - saveResultsToFile() : void
-  - cleanup() : void
-  {static} main(args: String[]) : void
+  + StatusPanel(initialText: String)
+  + setStatus(text: String) : void
 }
 
-' 10. ImageProcessor - Interface (polymorphism)
-interface ImageProcessor {
-  + process(image: BufferedImage) : BufferedImage
-  + getProcessorName() : String
+' 13. HeaderPanel
+class HeaderPanel {
+  + HeaderPanel()
 }
 
-' 11. GrayscaleProcessor - Implementation
-class GrayscaleProcessor {
-  + process(image: BufferedImage) : BufferedImage
-  + getProcessorName() : String
-}
-
-' 12. ResizeProcessor - Implementation
-class ResizeProcessor {
-  - targetWidth : int
-  - targetHeight : int
-  + ResizeProcessor(width: int, height: int)
-  + process(image: BufferedImage) : BufferedImage
-  + getProcessorName() : String
-}
-
-' 13. BrightnessProcessor - Implementation
-class BrightnessProcessor {
-  - factor : float
-  + BrightnessProcessor(brightnessFactor: float)
-  + process(image: BufferedImage) : BufferedImage
-  + getProcessorName() : String
-}
-
-' 14. NetworkClient - Abstract base class
-abstract class NetworkClient {
-  # serverUrl : String
-  # timeout : int
-  + NetworkClient(serverUrl: String, timeout: int)
-  + sendRequest(data: byte[]) : String
-  # createConnection(endpoint: String) : HttpURLConnection
-  # readResponse(inputStream: InputStream) : String
-}
-
-' 15. ImageClassifierClient - Concrete implementation
-class ImageClassifierClient {
-  + ImageClassifierClient(serverUrl: String, timeout: int)
-  + sendRequest(data: byte[]) : String
-  + checkHealth() : boolean
-}
-
-' 16. Cache - Generic class
-class "Cache<K,V>" as Cache {
-  - cache : Map<K, V>
-  - maxSize : int
-  + Cache(maxSize: int)
-  + put(key: K, value: V) : void
-  + get(key: K) : V
-  + contains(key: K) : boolean
-  + clear() : void
-  + size() : int
-  + getAllValues() : List<V>
-}
-
-' 17. ClassificationResult - Data class
-class ClassificationResult {
-  - predictions : List<Prediction>
-  - status : ClassificationStatus
-  - timestamp : long
-  + ClassificationResult()
-  + addPrediction(className: String, confidence: double, classId: int) : void
-  + getPredictions() : List<Prediction>
-  + setStatus(status: ClassificationStatus) : void
-  + getStatus() : ClassificationStatus
-  + getTimestamp() : long
-}
-
-' Inner class
-class Prediction {
-  - className : String
-  - confidence : double
-  - classId : int
-  + Prediction(className: String, confidence: double, classId: int)
-  + getClassName() : String
-  + getConfidence() : double
-  + getClassId() : int
-  + toString() : String
-}
-
-' Enum
-enum ClassificationStatus {
-  IDLE
-  PROCESSING
-  SUCCESS
-  ERROR
-  NO_IMAGE
+' 14. UIStyles
+class UIStyles {
+  {static} + BG_DARK : Color
+  {static} + BG_DARKER : Color
+  {static} + BG_LIGHTER : Color
+  {static} + ACCENT_GREEN : Color
+  {static} + TEXT_COLOR : Color
+  {static} + BORDER_COLOR : Color
 }
 
 ' ========== RELATIONSHIPS ==========
 
-' Inheritance relationships (C++)
+' C++ Relationships
 ActivationFunction <|-- SigmoidActivation
 ActivationFunction <|-- ReLUActivation
 ActivationFunction <|-- TanhActivation
-
-' Inheritance relationships (Java)
-ImageProcessor <|.. GrayscaleProcessor
-ImageProcessor <|.. ResizeProcessor
-ImageProcessor <|.. BrightnessProcessor
-NetworkClient <|-- ImageClassifierClient
-
-' Composition (strong ownership)
 NeuralNetwork *-- ActivationFunction : owns
-ImageClassifierUI *-- Cache : owns
-ImageClassifierUI *-- ImageClassifierClient : owns
-
-' Aggregation (weak relationship)
-ImageClassifierUI o-- ClassificationResult : uses
-ClassificationResult o-- Prediction : contains
-ClassificationResult o-- ClassificationStatus : has
-
-' Dependency (uses)
-NeuralNetwork ..> ActivationType : uses
 ActivationFactory ..> ActivationFunction : creates
 ActivationFactory ..> ActivationType : uses
-ImageClassifierUI ..> ImageProcessor : uses
-Cache ..> ClassificationResult : stores
+NeuralNetwork ..> ActivationType : uses
 
-' Association
-ClassificationResult -- Prediction : contains
+' Java Relationships
+MLAppUI *-- DrawingPanel : contains
+MLAppUI *-- StatusPanel : contains
+MLAppUI --> ControlPanel : creates
+MLAppUI --> HeaderPanel : creates
+MLAppUI ..> UIStyles : uses
+DrawingPanel ..> UIStyles : uses
+ControlPanel ..> UIStyles : uses
+StatusPanel ..> UIStyles : uses
+HeaderPanel ..> UIStyles : uses
 
 @enduml
