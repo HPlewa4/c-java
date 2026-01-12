@@ -16,17 +16,39 @@ public class DrawingPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (canvasImage != null) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
+                                RenderingHints.VALUE_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON);
+
             int imgWidth = canvasImage.getWidth();
             int imgHeight = canvasImage.getHeight();
+            int panelWidth = getWidth();
+            int panelHeight = getHeight();
 
-            int x = (getWidth() - imgWidth) / 2;
-            int y = (getHeight() - imgHeight) / 2;
+            // Calculate scaling to fit image in panel while maintaining aspect ratio
+            double scaleX = (double) panelWidth / imgWidth;
+            double scaleY = (double) panelHeight / imgHeight;
+            double scale = Math.min(scaleX, scaleY);
 
-            g.drawImage(canvasImage, x, y, null);
+            // Calculate scaled dimensions
+            int scaledWidth = (int) (imgWidth * scale);
+            int scaledHeight = (int) (imgHeight * scale);
+
+            // Center the image
+            int x = (panelWidth - scaledWidth) / 2;
+            int y = (panelHeight - scaledHeight) / 2;
+
+            // Draw scaled image
+            g2d.drawImage(canvasImage, x, y, scaledWidth, scaledHeight, null);
         }
     }
 
     public void loadImage(BufferedImage img) {
+        // Store original - backend will create high-quality 64x64 with OpenCV
         canvasImage = img;
         repaint();
     }

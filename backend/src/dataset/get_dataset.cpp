@@ -421,7 +421,7 @@ int main()
   try
   {
     std::string images_root = "data/celeba/img_align_celeba";
-    std::string attr_file = "data/celeba/list_attr_celeba.csv";
+    std::string attr_file = "data/celeba/list_attr_celeba.txt";
     std::string out_dir = "data/celeba_splits";
 
     CelebADatasetPreparer prep(images_root, attr_file);

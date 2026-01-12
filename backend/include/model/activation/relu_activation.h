@@ -4,7 +4,6 @@
 #include "activation_function.h"
 #include <algorithm>
 
-// Concrete class - inheritance and polymorphism
 class ReLUActivation : public ActivationFunction {
 public:
     double activate(double x) const override {

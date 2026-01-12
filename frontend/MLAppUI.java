@@ -1,6 +1,7 @@
 
 import src.ui.panels.*;
 import src.ui.utils.UIStyles;
+import src.api.BackendClient;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,12 +12,16 @@ public class MLAppUI extends JFrame {
     private DrawingPanel drawingCanvas;
     private StatusPanel statusPanel;
     private JLabel canvasTitle;
+    private BackendClient backendClient;
 
     public MLAppUI() {
-        setTitle("Widow's peak detector");
+        setTitle("Sigma's male detector");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(900, 700);
         setLocationRelativeTo(null);
+
+        // Initialize backend client
+        backendClient = new BackendClient("http://localhost:8080");
 
         try {
             ImageIcon icon = new ImageIcon("src/assets/icon.png");
@@ -81,15 +86,8 @@ public class MLAppUI extends JFrame {
     private void selectFile() {
         JFileChooser fileChooser = new JFileChooser();
 
-        // Set default directory to mounted volumes
-        File homeDir = new File("/app/home");
-        File uploadDir = new File("/app/uploads");
-
-        if (homeDir.exists()) {
-            fileChooser.setCurrentDirectory(homeDir);
-        } else if (uploadDir.exists()) {
-            fileChooser.setCurrentDirectory(uploadDir);
-        }
+        // Set default directory to user's home
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
 
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
                 "Image files", "jpg", "jpeg", "png", "bmp", "gif"));
@@ -119,119 +117,61 @@ public class MLAppUI extends JFrame {
             return;
         }
 
-        statusPanel.setStatus("Contacting backend...");
+        statusPanel.setStatus("Analyzing image...");
 
         new Thread(() -> {
-            String response = callHealthEndpoint();
+            try {
+                // First check if backend is healthy
+                BackendClient.HealthResponse health = backendClient.checkHealth();
 
-            SwingUtilities.invokeLater(() -> {
-                statusPanel.setStatus("Backend Response: " + response);
-            });
+                if (!health.modelLoaded) {
+                    SwingUtilities.invokeLater(() -> {
+                        statusPanel.setStatus("Error: Model not loaded on backend");
+                    });
+                    return;
+                }
+
+                // Get image from canvas
+                BufferedImage image = drawingCanvas.getImage();
+
+                // Classify image
+                BackendClient.ClassificationResponse result = backendClient.classifyImage(image);
+
+                // Update UI with result
+                SwingUtilities.invokeLater(() -> {
+                    String message = String.format(
+                        "Result: %s (%.1f%% confidence)",
+                        result.label,
+                        result.confidence * 100
+                    );
+                    statusPanel.setStatus(message);
+
+                    // Show dialog with detailed results
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "<html><body style='width: 300px; padding: 10px;'>" +
+                        "<h2>Classification Result</h2>" +
+                        "<p><b>Prediction:</b> " + result.label + "</p>" +
+                        "<p><b>Confidence:</b> " + String.format("%.2f%%", result.confidence * 100) + "</p>" +
+                        "</body></html>",
+                        "Result",
+                        JOptionPane.INFORMATION_MESSAGE
+                    );
+                });
+
+            } catch (Exception e) {
+                SwingUtilities.invokeLater(() -> {
+                    statusPanel.setStatus("Error: " + e.getMessage());
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "Failed to classify image:\n" + e.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                });
+                e.printStackTrace();
+            }
         }).start();
-    }
-    /*
-    private void processImage() {
-        if (!drawingCanvas.hasImage()) {
-            statusPanel.setStatus("No image uploaded. Please select a file first.");
-            return;
-        }
-
-        statusPanel.setStatus("Sending image to backend...");
-
-        new Thread(() -> {
-            BufferedImage img = drawingCanvas.getImage();  // You’ll need a getter in DrawingPanel
-            byte[] imgBytes = bufferedImageToBytes(img, "png");
-
-            if (imgBytes == null) {
-                SwingUtilities.invokeLater(() ->
-                    statusPanel.setStatus("Failed to convert image to bytes.")
-                );
-                return;
-            }
-
-            String response = sendImageToServer(imgBytes);
-
-            SwingUtilities.invokeLater(() -> {
-                statusPanel.setStatus("Backend Response: " + response);
-            });
-        }).start();
-    }
-    
-    private String sendImageToServer(byte[] imgBytes) {
-        try {
-            java.net.URL url = new java.net.URL("http://c-java-backend-1:8080/classify");
-            java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
-            conn.setRequestProperty("Content-Type", "application/octet-stream");
-            conn.setConnectTimeout(5000);
-            conn.setReadTimeout(5000);
-
-            try (java.io.OutputStream os = conn.getOutputStream()) {
-                os.write(imgBytes);
-            }
-
-            int status = conn.getResponseCode();
-            java.io.InputStream stream =
-                    (status >= 200 && status < 300)
-                            ? conn.getInputStream()
-                            : conn.getErrorStream();
-
-            java.io.BufferedReader reader = new java.io.BufferedReader(
-                    new java.io.InputStreamReader(stream)
-            );
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-            reader.close();
-            conn.disconnect();
-            return response.toString();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Error: " + e.getMessage();
-        }
-    }
-    */
-
-    
-    private String callHealthEndpoint() {
-        try {
-            java.net.URL url = new java.net.URL("http://c-java-backend-1:8080/health");
-            java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
-
-            conn.setRequestMethod("GET");
-            conn.setConnectTimeout(3000);
-            conn.setReadTimeout(3000);
-
-            int status = conn.getResponseCode();
-
-            java.io.InputStream stream =
-                    (status >= 200 && status < 300)
-                            ? conn.getInputStream()
-                            : conn.getErrorStream();
-
-            java.io.BufferedReader reader = new java.io.BufferedReader(
-                    new java.io.InputStreamReader(stream)
-            );
-
-            StringBuilder response = new StringBuilder();
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-
-            reader.close();
-            conn.disconnect();
-
-            return response.toString();
-
-        } catch (Exception e) {
-            return "Error: " + e.getMessage();
-        }
     }
 
 

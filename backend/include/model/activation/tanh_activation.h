@@ -4,7 +4,6 @@
 #include "activation_function.h"
 #include <cmath>
 
-// Concrete class - inheritance and polymorphism
 class TanhActivation : public ActivationFunction {
 public:
     double activate(double x) const override {

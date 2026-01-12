@@ -10,7 +10,7 @@ public class HeaderPanel extends JPanel {
         setBackground(UIStyles.BG_DARKER);
         setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
-        JLabel title = new JLabel("Widow's peak detector");
+        JLabel title = new JLabel("Sigma's male detector");
         title.setFont(new Font("Segoe UI", Font.BOLD, 24));
         title.setForeground(UIStyles.ACCENT_GREEN);
         add(title, BorderLayout.WEST);

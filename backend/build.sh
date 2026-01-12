@@ -1,12 +1,6 @@
 #!/bin/bash
 # Build C++ backend
 
-echo "======================================"
-echo "  C++ Backend Build Script"
-echo "======================================"
-echo ""
-
-# Check for CMake
 if ! command -v cmake &> /dev/null; then
     echo "❌ ERROR: CMake is not installed!"
     echo ""
@@ -18,7 +12,6 @@ if ! command -v cmake &> /dev/null; then
     exit 1
 fi
 
-# Check for C++ compiler
 if ! command -v g++ &> /dev/null && ! command -v clang++ &> /dev/null; then
     echo "❌ ERROR: No C++ compiler found!"
     echo ""
@@ -29,14 +22,12 @@ if ! command -v g++ &> /dev/null && ! command -v clang++ &> /dev/null; then
     exit 1
 fi
 
-# Check for OpenCV (optional but recommended)
 if ! pkg-config --exists opencv4 2>/dev/null && ! pkg-config --exists opencv 2>/dev/null; then
     echo "⚠️  WARNING: OpenCV not found (needed for train & server)"
     echo "   To install: brew install opencv  (or see INSTALL.md)"
     echo ""
 fi
 
-# Check for libmicrohttpd (optional)
 if ! pkg-config --exists libmicrohttpd 2>/dev/null; then
     echo "⚠️  WARNING: libmicrohttpd not found (needed for server)"
     echo "   To install: brew install libmicrohttpd"
@@ -46,11 +37,9 @@ fi
 echo "Building C++ backend..."
 echo ""
 
-# Create build directory
 mkdir -p build
 cd build
 
-# Configure with CMake
 cmake .. -DCMAKE_BUILD_TYPE=Release
 
 if [ $? -ne 0 ]; then
@@ -60,7 +49,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Build
 make -j4
 
 if [ $? -eq 0 ]; then
@@ -69,13 +57,26 @@ if [ $? -eq 0 ]; then
     echo "  ✅ Build Successful!"
     echo "======================================"
     echo ""
-    echo "Executables created:"
-    echo "  - ./build/train               (Training application)"
-    echo "  - ./build/server              (HTTP Server)"
-    echo "  - ./build/test_neural_network (Unit tests)"
+    echo "Training executables:"
+    echo "  - ./build/train_quick         (Quick CPU training)"
+    echo "  - ./build/train_full          (Full GPU training with LibTorch)"
+    echo "  - ./build/test_model          (Unified model testing)"
     echo ""
-    echo "To run tests:     cd build && ./test_neural_network"
-    echo "To start server:  cd build && ./server"
+    echo "Server:"
+    echo "  - ./build/server              (HTTP REST API server)"
+    echo ""
+    echo "Unit tests:"
+    echo "  - ./build/test_tensor         (Generic template tests)"
+    echo "  - ./build/test_activations    (Activation function tests)"
+    echo "  - ./build/test_optimizer      (Optimizer tests)"
+    echo "  - ./build/test_parallel       (Parallel processing tests)"
+    echo ""
+    echo "Quick start:"
+    echo "  Train quick: cd build && ./train_quick"
+    echo "  Train full:  cd build && ./train_full"
+    echo "  Test model:  cd build && ./test_model ../models/cnn_cpu.bin"
+    echo "  Run server:  cd build && ./server"
+    echo "  Run tests:   cd build && ./test_tensor"
     echo ""
 else
     echo ""

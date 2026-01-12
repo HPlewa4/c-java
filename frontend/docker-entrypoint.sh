@@ -21,6 +21,15 @@ trap cleanup EXIT
 Xvfb "${DISPLAY}" -screen 0 "${SCREEN_RES}" >/var/log/xvfb.log 2>&1 &
 XVFB_PID=$!
 
+echo "Waiting for Xvfb to start..."
+for i in {1..10}; do
+  if xdpyinfo -display "${DISPLAY}" >/dev/null 2>&1; then
+    echo "Xvfb is ready!"
+    break
+  fi
+  sleep 1
+done
+
 fluxbox -display "${DISPLAY}" >/var/log/fluxbox.log 2>&1 &
 FLUXBOX_PID=$!
 
