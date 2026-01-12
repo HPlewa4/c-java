@@ -2,25 +2,41 @@
 set -euo pipefail
 
 MODELS_DIR=${MODELS_DIR:-/app/models}
-MODEL_FILE=${MODEL_FILE:-${MODELS_DIR}/trained_model.bin}
-CLASSES_FILE=${CLASSES_FILE:-${MODELS_DIR}/classes.txt}
-INPUT_DIM=${INPUT_DIM:-1024}
-HIDDEN_DIM=${HIDDEN_DIM:-128}
-DEFAULT_CLASS_COUNT=${DEFAULT_CLASS_COUNT:-5}
 PORT=${PORT:-8080}
+
+DEFAULT_MODEL="${MODELS_DIR}/cnn_cpu.bin"
+MODEL_FILE=${MODEL_FILE:-$DEFAULT_MODEL}
+
+echo "[backend] Starting CNN backend server"
+echo "[backend] Models directory: ${MODELS_DIR}"
+echo "[backend] Port: ${PORT}"
 
 mkdir -p "${MODELS_DIR}"
 
-if [ ! -s "${CLASSES_FILE}" ] || [ ! -s "${MODEL_FILE}" ]; then
-    echo "[backend] Creating stub artifacts in ${MODELS_DIR}"
-    python3 /app/scripts/generate_stub_model.py \
-        --model "${MODEL_FILE}" \
-        --classes "${CLASSES_FILE}" \
-        --input-dim "${INPUT_DIM}" \
-        --hidden-dim "${HIDDEN_DIM}" \
-        --num-classes "${DEFAULT_CLASS_COUNT}"
+if [ ! -f "${MODEL_FILE}" ]; then
+    echo ""
+    echo "⚠️  WARNING: Model file not found: ${MODEL_FILE}"
+    echo ""
+    echo "The server requires a trained CNN model to function."
+    echo "Please provide a model by:"
+    echo "  1. Training a model and mounting it as a volume:"
+    echo "     docker run -v ./models:/app/models ..."
+    echo ""
+    echo "  2. Or train inside container (slow, not recommended):"
+    echo "     docker exec -it <container> /app/build/train_quick"
+    echo ""
+    echo "Available models should be placed at:"
+    echo "  - ${MODELS_DIR}/cnn_cpu.bin (CPU model)"
+    echo "  - ${MODELS_DIR}/cnn_gpu.pt (GPU model)"
+    echo ""
+    echo "Server will start but classification will fail without a model."
+    echo ""
+    
+    exec /app/build/server
 else
-    echo "[backend] Using existing model artifacts from ${MODELS_DIR}"
+    echo "[backend] Using model: ${MODEL_FILE}"
+    echo "[backend] Server starting on port ${PORT}"
+    echo ""
+    
+    exec /app/build/server "${MODEL_FILE}" "${PORT}"
 fi
-
-exec /app/build/server "${MODEL_FILE}" "${CLASSES_FILE}" "${PORT}"

@@ -49,32 +49,36 @@ set(MODEL_SOURCES
     src/utils/augmentation.cpp
 )
 
-add_executable(train_quick
-    src/training/train_quick.cpp
+add_executable(train_full
+    src/training/train_full.cpp
     ${MODEL_SOURCES}
 )
 
 if(NOT APPLE)
-    target_link_libraries(train_quick ${OpenCV_LIBS} stdc++fs pthread)
+    target_link_libraries(train_full ${OpenCV_LIBS} stdc++fs pthread)
 else()
-    target_link_libraries(train_quick ${OpenCV_LIBS} pthread "-framework Accelerate")
+    target_link_libraries(train_full ${OpenCV_LIBS} pthread "-framework Accelerate")
 endif()
 
 if(OpenMP_CXX_FOUND)
-    target_link_libraries(train_quick OpenMP::OpenMP_CXX)
+    target_link_libraries(train_full OpenMP::OpenMP_CXX)
 endif()
 
 if(Torch_FOUND)
-    add_executable(train_full
-        src/training/train_full.cpp
+    add_executable(train_quick
+        src/training/train_quick.cpp
     )
 
-    target_link_libraries(train_full ${TORCH_LIBRARIES} ${OpenCV_LIBS} pthread)
+    target_link_libraries(train_quick ${TORCH_LIBRARIES} ${OpenCV_LIBS} pthread)
 
-    set_target_properties(train_full PROPERTIES
+    set_target_properties(train_quick PROPERTIES
         BUILD_RPATH "${CMAKE_SOURCE_DIR}/lib/libtorch/lib"
         INSTALL_RPATH "${CMAKE_SOURCE_DIR}/lib/libtorch/lib"
     )
+
+    if(APPLE)
+        target_link_libraries(train_quick "-framework Accelerate")
+    endif()
 
     add_executable(test_model
         src/training/test_model.cpp
@@ -94,7 +98,7 @@ if(Torch_FOUND)
 
     message(STATUS "Training executables: train_quick, train_full, test_model")
 else()
-    message(STATUS "Training executables: train_quick")
+    message(STATUS "Training executables: train_full")
 endif()
 
 # HTTP Server (serves CNN model via REST API)
