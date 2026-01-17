@@ -24,7 +24,7 @@ public class BackendClientTest {
         assertTrue("Model should be loaded", health.modelLoaded);
     }
 
-    @Test(expected = Exception.class) 
+    @Test(expected = NumberFormatException.class)
     public void testMalformedJsonHandling() {
         String badJson = "{invalid:json}";
         BackendClient.ClassificationResponse.fromJson(badJson);
