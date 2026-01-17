@@ -1,4 +1,5 @@
 import src.ui.panels.*;
+import src.ui.utils.UIComponent;
 import src.ui.utils.UIStyles;
 import src.api.BackendClient;
 import javax.swing.*;
@@ -16,6 +17,7 @@ public class MLAppUI extends JFrame {
     private StatusPanel statusPanel;
     private JLabel canvasTitle;
     private BackendClient backendClient;
+    private java.util.List<UIComponent> components = new java.util.ArrayList<>();
 
     public MLAppUI() {
         setTitle("Sigma's male detector");
@@ -122,13 +124,16 @@ public class MLAppUI extends JFrame {
         // Status bar
         statusPanel = new StatusPanel("Ready");
         add(statusPanel, BorderLayout.SOUTH);
+        components.add(drawingCanvas);
+        components.add(statusPanel);
     }
 
 
     private void clearCanvas() {
-        drawingCanvas.clearCanvas();
-        statusPanel.setStatus("Canvas cleared");
+    for (UIComponent c : components) {
+        c.reset(); 
     }
+}
 
     private void selectFile() {
         JFileChooser fileChooser = new JFileChooser();

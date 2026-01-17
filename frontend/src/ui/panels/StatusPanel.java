@@ -1,10 +1,11 @@
 package src.ui.panels;
 
+import src.ui.utils.UIComponent;
 import src.ui.utils.UIStyles;
 import javax.swing.*;
 import java.awt.*;
 
-public class StatusPanel extends JPanel {
+public class StatusPanel extends JPanel implements UIComponent {
     private JLabel statusLabel;
 
     public StatusPanel(String initialText) {
@@ -23,5 +24,10 @@ public class StatusPanel extends JPanel {
 
     public void setStatus(String text) {
         statusLabel.setText(text);
+    }
+
+    @Override
+    public void reset() {
+        statusLabel.setText("Ready");
     }
 }

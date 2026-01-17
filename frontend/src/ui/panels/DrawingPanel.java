@@ -1,15 +1,20 @@
 package src.ui.panels;
-
+import src.ui.utils.UIComponent;
 import src.ui.utils.UIStyles;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class DrawingPanel extends JPanel {
+public class DrawingPanel extends JPanel implements UIComponent {
     private BufferedImage canvasImage;
 
     public DrawingPanel() {
         setBackground(UIStyles.BG_DARKER);
+    }
+
+    @Override
+    public void reset() {
+        clearCanvas();
     }
 
     @Override
