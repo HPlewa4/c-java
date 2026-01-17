@@ -44,13 +44,21 @@ public class MLAppUI extends JFrame {
         setVisible(true);
     }
     private void saveSessionAndExit() {
+        File outputFile = new File(SESSION_FILE);
+        
         if (drawingCanvas.hasImage()) {
             try {
-                File outputFile = new File(SESSION_FILE);
                 ImageIO.write(drawingCanvas.getImage(), "png", outputFile);
                 System.out.println("Session saved to " + SESSION_FILE);
             } catch (IOException e) {
                 System.err.println("Failed to save session: " + e.getMessage());
+            }
+        } else {
+            if (outputFile.exists()) {
+                boolean deleted = outputFile.delete();
+                if (deleted) {
+                    System.out.println("Canvas was empty; session file cleared.");
+                }
             }
         }
         System.out.println("Closing application...");
