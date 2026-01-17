@@ -128,12 +128,15 @@ public class MLAppUI extends JFrame {
         components.add(statusPanel);
     }
 
-
-    private void clearCanvas() {
-    for (UIComponent c : components) {
-        c.reset(); 
+    private <T extends UIComponent> void resetAll(java.util.List<T> components) {
+        for (T component : components) {
+            component.reset();
+        }
     }
-}
+    private void clearCanvas() {
+        resetAll(components);
+    }
+
 
     private void selectFile() {
         JFileChooser fileChooser = new JFileChooser();
