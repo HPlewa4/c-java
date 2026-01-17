@@ -2,7 +2,7 @@ package src.ui.utils;
 
 import java.awt.*;
 
-public class UIStyles {
+public interface UIStyles {
     public static final Color BG_DARK = new Color(30, 30, 30);
     public static final Color BG_DARKER = new Color(20, 20, 20);
     public static final Color BG_LIGHTER = new Color(45, 45, 45);
