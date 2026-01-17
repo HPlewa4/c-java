@@ -3,7 +3,6 @@ package src.ui.utils;
 import java.awt.*;
 
 public interface UIStyles {
-    // Requirement: Enumeration (1 pt)
     public enum ColorPalette {
         BG_DARK(30, 30, 30),
         BG_DARKER(20, 20, 20),
