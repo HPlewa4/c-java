@@ -1,14 +1,17 @@
-
 import src.ui.panels.*;
 import src.ui.utils.UIStyles;
 import src.api.BackendClient;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class MLAppUI extends JFrame {
+    private final String SESSION_FILE = "last_session.png";
     private DrawingPanel drawingCanvas;
     private StatusPanel statusPanel;
     private JLabel canvasTitle;
@@ -16,13 +19,18 @@ public class MLAppUI extends JFrame {
 
     public MLAppUI() {
         setTitle("Sigma's male detector");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setSize(900, 700);
         setLocationRelativeTo(null);
 
         // Initialize backend client
         backendClient = new BackendClient("http://localhost:8080");
-
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                saveSessionAndExit();
+            }
+        });
         try {
             ImageIcon icon = new ImageIcon("src/assets/icon.png");
             setIconImage(icon.getImage());
@@ -32,8 +40,39 @@ public class MLAppUI extends JFrame {
         }
 
         initComponents();
+        loadLastSession();
         setVisible(true);
     }
+    private void saveSessionAndExit() {
+        if (drawingCanvas.hasImage()) {
+            try {
+                File outputFile = new File(SESSION_FILE);
+                ImageIO.write(drawingCanvas.getImage(), "png", outputFile);
+                System.out.println("Session saved to " + SESSION_FILE);
+            } catch (IOException e) {
+                System.err.println("Failed to save session: " + e.getMessage());
+            }
+        }
+        System.out.println("Closing application...");
+        dispose();
+        System.exit(0);
+    }
+
+    private void loadLastSession() {
+        File sessionFile = new File(SESSION_FILE);
+        if (sessionFile.exists()) {
+            try {
+                BufferedImage img = ImageIO.read(sessionFile);
+                if (img != null) {
+                    drawingCanvas.loadImage(img);
+                    statusPanel.setStatus("Restored last session");
+                }
+            } catch (IOException e) {
+                System.err.println("Failed to load session: " + e.getMessage());
+            }
+        }
+    }
+
 
     private void initComponents() {
         setLayout(new BorderLayout(0, 0));

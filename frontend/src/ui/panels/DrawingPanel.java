@@ -48,9 +48,9 @@ public class DrawingPanel extends JPanel {
     }
 
     public void loadImage(BufferedImage img) {
-        // Store original - backend will create high-quality 64x64 with OpenCV
-        canvasImage = img;
-        repaint();
+        this.canvasImage = img;
+        this.revalidate();
+        this.repaint();
     }
 
     public BufferedImage getImage() {
