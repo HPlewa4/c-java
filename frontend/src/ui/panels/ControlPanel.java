@@ -8,15 +8,15 @@ import java.awt.event.*;
 public class ControlPanel extends JPanel {
     public ControlPanel(Runnable clearAction, Runnable selectFileAction, Runnable processAction) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(UIStyles.BG_LIGHTER);
+        setBackground(UIStyles.ColorPalette.BG_LIGHTER.getColor());
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 0, 0, 2, UIStyles.BORDER_COLOR),
+                BorderFactory.createMatteBorder(0, 0, 0, 2, UIStyles.ColorPalette.BORDER.getColor()),
                 BorderFactory.createEmptyBorder(20, 15, 20, 15)));
         setPreferredSize(new Dimension(220, 0));
 
         JLabel title = new JLabel("Controls");
         title.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        title.setForeground(UIStyles.ACCENT_GREEN);
+        title.setForeground(UIStyles.ColorPalette.ACCENT_GREEN.getColor());
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(title);
         add(Box.createRigidArea(new Dimension(0, 25)));
@@ -25,21 +25,21 @@ public class ControlPanel extends JPanel {
         add(Box.createRigidArea(new Dimension(0, 12)));
         add(createButton("Select File", new Color(52, 152, 219), selectFileAction));
         add(Box.createRigidArea(new Dimension(0, 12)));
-        add(createButton("Process Image", UIStyles.ACCENT_GREEN, processAction));
+        add(createButton("Process Image", UIStyles.ColorPalette.ACCENT_GREEN.getColor(), processAction));
         add(Box.createRigidArea(new Dimension(0, 30)));
 
         // Info area
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-        infoPanel.setBackground(UIStyles.BG_DARK);
+        infoPanel.setBackground(UIStyles.ColorPalette.BG_DARK.getColor());
         infoPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(UIStyles.BORDER_COLOR, 1),
+                BorderFactory.createLineBorder(UIStyles.ColorPalette.BORDER.getColor(), 1),
                 BorderFactory.createEmptyBorder(15, 10, 15, 10)));
         infoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel infoTitle = new JLabel("Instructions");
         infoTitle.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        infoTitle.setForeground(UIStyles.ACCENT_GREEN);
+        infoTitle.setForeground(UIStyles.ColorPalette.ACCENT_GREEN.getColor());
         infoTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JTextArea infoText = new JTextArea(
@@ -47,8 +47,8 @@ public class ControlPanel extends JPanel {
                 "- Process image\n" +
                 "- Read the output\n");
         infoText.setEditable(false);
-        infoText.setBackground(UIStyles.BG_DARK);
-        infoText.setForeground(UIStyles.TEXT_COLOR);
+        infoText.setBackground(UIStyles.ColorPalette.BG_DARK.getColor());
+        infoText.setForeground(UIStyles.ColorPalette.TEXT.getColor());
         infoText.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         infoText.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
 

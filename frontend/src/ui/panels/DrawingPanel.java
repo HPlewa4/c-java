@@ -9,7 +9,7 @@ public class DrawingPanel extends JPanel implements UIComponent {
     private BufferedImage canvasImage;
 
     public DrawingPanel() {
-        setBackground(UIStyles.BG_DARKER);
+        setBackground(UIStyles.ColorPalette.BG_DARKER.getColor());
     }
 
     @Override

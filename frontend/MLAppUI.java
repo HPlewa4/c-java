@@ -86,7 +86,7 @@ public class MLAppUI extends JFrame {
 
     private void initComponents() {
         setLayout(new BorderLayout(0, 0));
-        getContentPane().setBackground(UIStyles.BG_DARK);
+        getContentPane().setBackground(UIStyles.ColorPalette.BG_DARK.getColor());
 
         // Header
         HeaderPanel headerPanel = new HeaderPanel();
@@ -94,7 +94,7 @@ public class MLAppUI extends JFrame {
 
         // Center layout
         JPanel centerPanel = new JPanel(new BorderLayout(0, 0));
-        centerPanel.setBackground(UIStyles.BG_DARK);
+        centerPanel.setBackground(UIStyles.ColorPalette.BG_DARK.getColor());
 
         // Controls
         ControlPanel controlPanel = new ControlPanel(
@@ -105,16 +105,16 @@ public class MLAppUI extends JFrame {
 
         // Canvas
         JPanel canvasPanel = new JPanel(new BorderLayout());
-        canvasPanel.setBackground(UIStyles.BG_DARK);
+        canvasPanel.setBackground(UIStyles.ColorPalette.BG_DARK.getColor());
         canvasPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         canvasTitle = new JLabel("Selected file:");
         canvasTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        canvasTitle.setForeground(UIStyles.TEXT_COLOR);
+        canvasTitle.setForeground(UIStyles.ColorPalette.TEXT.getColor());
         canvasTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
         drawingCanvas = new DrawingPanel();
-        drawingCanvas.setBackground(UIStyles.BG_DARKER);
+        drawingCanvas.setBackground(UIStyles.ColorPalette.BG_DARKER.getColor());
         canvasPanel.add(canvasTitle, BorderLayout.NORTH);
         canvasPanel.add(drawingCanvas, BorderLayout.CENTER);
 
