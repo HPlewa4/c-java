@@ -8,6 +8,8 @@ public interface UIStyles {
         BG_DARKER(20, 20, 20),
         BG_LIGHTER(45, 45, 45),
         ACCENT_GREEN(46, 204, 113),
+        RED(231, 76, 60),
+        BLUE(52, 152, 219),
         TEXT(220, 220, 220),
         BORDER(60, 60, 60);
 

@@ -21,12 +21,12 @@ public class ControlPanel extends JPanel {
         add(title);
         add(Box.createRigidArea(new Dimension(0, 25)));
 
-        add(createButton("Clear Canvas", new Color(231, 76, 60), clearAction));
+        add(createButton("Clear Canvas", UIStyles.ColorPalette.RED.getColor(), clearAction));
         add(Box.createRigidArea(new Dimension(0, 12)));
-        add(createButton("Select File", new Color(52, 152, 219), selectFileAction));
+        add(createButton("Select File", UIStyles.ColorPalette.BLUE.getColor(), selectFileAction));
         add(Box.createRigidArea(new Dimension(0, 12)));
         add(createButton("Process Image", UIStyles.ColorPalette.ACCENT_GREEN.getColor(), processAction));
-        add(Box.createRigidArea(new Dimension(0, 30)));
+        add(Box.createRigidArea(new Dimension(0, 12)));
 
         // Info area
         JPanel infoPanel = new JPanel();
