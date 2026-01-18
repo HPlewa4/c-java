@@ -18,7 +18,7 @@ public class HeaderPanel extends JPanel {
             int width = getWidth();
             int height = getHeight();
 
-            // Fiery gradient background
+            // Gradient background
             GradientPaint bg = new GradientPaint(0, 0,
                     UIStyles.ColorPalette.FIRE_RED.getColor(),
                     width,
@@ -27,19 +27,18 @@ public class HeaderPanel extends JPanel {
             g2d.setPaint(bg);
             g2d.fillRect(0, 0, width, height);
 
-            // Subtle overlay stripes for a WordArt feel
             g2d.setColor(new Color(255, 255, 255, 30));
             for (int x = -height; x < width + height; x += 22) {
                 g2d.drawLine(x, 0, x + height, height);
             }
 
-            // Display logo at full size, centered
+            // Display logo
             if (logoImage != null) {
                 int imgWidth = logoImage.getWidth(null);
                 int imgHeight = logoImage.getHeight(null);
 
                 if (imgWidth > 0 && imgHeight > 0) {
-                    // Calculate scaling to fit within panel
+                    // Calculate scaling
                     double scaleX = (double) (width - 40) / imgWidth;
                     double scaleY = (double) (height - 30) / imgHeight;
                     double scale = Math.min(scaleX, scaleY);
@@ -54,7 +53,7 @@ public class HeaderPanel extends JPanel {
                     g2d.setColor(new Color(0, 0, 0, 150));
                     g2d.drawImage(logoImage, x + 3, y + 3, scaledWidth, scaledHeight, null);
 
-                    // Draw logo with glow
+                    // Draw logo
                     g2d.setColor(new Color(255, 255, 255, 100));
                     g2d.setStroke(new BasicStroke(2f));
                     g2d.drawRect(x - 2, y - 2, scaledWidth + 4, scaledHeight + 4);

@@ -31,7 +31,6 @@ public class DrawingPanel extends JPanel implements UIComponent {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Draw decorative border elements (90's style)
         drawDecorativeBorder(g2d);
 
         if (canvasImage != null) {
@@ -40,27 +39,22 @@ public class DrawingPanel extends JPanel implements UIComponent {
             int panelWidth = getWidth();
             int panelHeight = getHeight();
 
-            // Calculate scaling to fit image in panel while maintaining aspect ratio
             double scaleX = (double) (panelWidth - 20) / imgWidth;
             double scaleY = (double) (panelHeight - 20) / imgHeight;
             double scale = Math.min(scaleX, scaleY);
 
-            // Calculate scaled dimensions
             int scaledWidth = (int) (imgWidth * scale);
             int scaledHeight = (int) (imgHeight * scale);
 
-            // Center the image
             int x = (panelWidth - scaledWidth) / 2;
             int y = (panelHeight - scaledHeight) / 2;
 
-            // Draw image with shadow effect
             g2d.setColor(new Color(0, 0, 0, 100));
             g2d.fillRect(x + 3, y + 3, scaledWidth, scaledHeight);
 
-            // Draw scaled image
             g2d.drawImage(canvasImage, x, y, scaledWidth, scaledHeight, null);
 
-            // Draw fiery border around image
+            // Draw border around image
             g2d.setColor(UIStyles.ColorPalette.FIRE_YELLOW.getColor());
             g2d.setStroke(new BasicStroke(2f));
             g2d.drawRect(x - 2, y - 2, scaledWidth + 4, scaledHeight + 4);
@@ -71,7 +65,7 @@ public class DrawingPanel extends JPanel implements UIComponent {
         int w = getWidth();
         int h = getHeight();
 
-        // Corner decorations (flame tips)
+        // Corner decorations
         Color deco1 = UIStyles.ColorPalette.FIRE_ORANGE.getColor();
         Color deco2 = UIStyles.ColorPalette.FIRE_RED.getColor();
 

@@ -182,7 +182,6 @@ public class MLAppUI extends JFrame {
 
         new Thread(() -> {
             try {
-                // First check if backend is healthy
                 BackendClient.HealthResponse health = backendClient.checkHealth();
 
                 if (!health.modelLoaded) {
@@ -192,13 +191,10 @@ public class MLAppUI extends JFrame {
                     return;
                 }
 
-                // Get image from canvas
                 BufferedImage image = drawingCanvas.getImage();
 
-                // Classify image
                 BackendClient.ClassificationResponse result = backendClient.classifyImage(image);
 
-                // Update UI with result
                 SwingUtilities.invokeLater(() -> {
                     String message = String.format(
                             "Result: %s (%.1f%% confidence)",
@@ -206,7 +202,7 @@ public class MLAppUI extends JFrame {
                             result.confidence * 100);
                     statusPanel.setStatus(message);
 
-                    // Show dialog with detailed results
+                    // Show dialog
                     JOptionPane.showMessageDialog(
                             this,
                             "<html><body style='width: 300px; padding: 10px;'>" +

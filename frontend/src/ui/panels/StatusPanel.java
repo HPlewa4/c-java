@@ -19,11 +19,9 @@ public class StatusPanel extends JPanel implements UIComponent {
         statusLabel.setFont(new Font("Courier New", Font.BOLD, 13));
         statusLabel.setForeground(UIStyles.ColorPalette.FIRE_YELLOW.getColor());
 
-        // Add a decorative prefix
         statusLabel.setText(">>> " + initialText + " <<<");
         add(statusLabel, BorderLayout.WEST);
 
-        // Add animated decorations (static for now)
         JLabel deco = new JLabel("*");
         deco.setFont(new Font("Impact", Font.BOLD, 16));
         deco.setForeground(UIStyles.ColorPalette.FIRE_ORANGE.getColor());

@@ -51,7 +51,6 @@ public class ControlPanel extends JPanel {
 
             boolean hovered = getModel().isArmed() || getModel().isPressed();
 
-            // Draw glow effect
             if (hovered) {
                 g2d.setColor(new Color(
                         glowColor.getRed(),
@@ -61,7 +60,6 @@ public class ControlPanel extends JPanel {
                 g2d.fillRect(-5, -5, getWidth() + 10, getHeight() + 10);
             }
 
-            // Main button background with gradient
             Paint gradient = new GradientPaint(
                     0, 0, hovered ? glowColor : baseColor,
                     0, getHeight(),
@@ -131,7 +129,7 @@ public class ControlPanel extends JPanel {
 
         add(Box.createRigidArea(new Dimension(0, 12)));
 
-        // Info area with 90's style
+        // Info area
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setBackground(UIStyles.ColorPalette.BG_DARK.getColor());
