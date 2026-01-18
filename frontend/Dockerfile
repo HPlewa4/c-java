@@ -18,7 +18,7 @@ RUN echo 'Acquire::http::Pipeline-Depth "0";' > /etc/apt/apt.conf.d/99fixbadprox
 WORKDIR /app
 COPY . /app
 RUN mkdir -p build/out \
-    && find . -name '*.java' -print0 | xargs -0 javac -d build/out
+    && find . -name '*.java' -not -path '*/tests/*' -print0 | xargs -0 javac -d build/out
 RUN chmod +x /app/docker-entrypoint.sh
 ENV DISPLAY=:1 \
     SCREEN_RES=1280x800x24 \

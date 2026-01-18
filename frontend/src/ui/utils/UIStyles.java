@@ -2,11 +2,24 @@ package src.ui.utils;
 
 import java.awt.*;
 
-public class UIStyles {
-    public static final Color BG_DARK = new Color(30, 30, 30);
-    public static final Color BG_DARKER = new Color(20, 20, 20);
-    public static final Color BG_LIGHTER = new Color(45, 45, 45);
-    public static final Color ACCENT_GREEN = new Color(46, 204, 113);
-    public static final Color TEXT_COLOR = new Color(220, 220, 220);
-    public static final Color BORDER_COLOR = new Color(60, 60, 60);
+public interface UIStyles {
+    public enum ColorPalette {
+        BG_DARK(20, 12, 8),
+        BG_DARKER(12, 7, 5),
+        BG_LIGHTER(35, 18, 10),
+        FIRE_RED(255, 64, 32),
+        FIRE_ORANGE(255, 140, 0),
+        FIRE_YELLOW(255, 213, 79),
+        FIRE_GLOW(255, 170, 90);
+
+        private final Color color;
+
+        ColorPalette(int r, int g, int b) {
+            this.color = new Color(r, g, b);
+        }
+
+        public Color getColor() {
+            return color;
+        }
+    }
 }

@@ -2,8 +2,8 @@ set -e
 
 echo "=== Running Frontend Natively ==="
 echo ""
+JAVA_17_HOME=$(dirname $(dirname $(readlink -f $(which java))))
 
-JAVA_17_HOME=$(/usr/libexec/java_home -v 17 2>/dev/null)
 
 if [ -z "$JAVA_17_HOME" ]; then
     echo "Error: Java 17 not found. Please install it:"
@@ -19,10 +19,13 @@ echo ""
 
 mkdir -p build/out
 
+CP=".:lib/*:build/out"
+
 echo "Compiling Java files..."
-find . -name "*.java" -print0 | xargs -0 "$JAVA_HOME/bin/javac" -d build/out
+find . -name "*.java" -print0 | xargs -0 "$JAVA_HOME/bin/javac" -cp "$CP" -d build/out
 
 echo "Starting ML App UI..."
 echo "Backend should be running on http://localhost:8080"
 echo ""
-"$JAVA_HOME/bin/java" -cp build/out MLAppUI
+
+"$JAVA_HOME/bin/java" -cp "$CP" MLAppUI
