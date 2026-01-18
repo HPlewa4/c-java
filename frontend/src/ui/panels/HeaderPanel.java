@@ -20,10 +20,10 @@ public class HeaderPanel extends JPanel {
 
             // Gradient background
             GradientPaint bg = new GradientPaint(0, 0,
-                    UIStyles.ColorPalette.FIRE_RED.getColor(),
+                    UIStyles.ColorPalette.BG_DARKER.getColor(),
                     width,
                     height,
-                    UIStyles.ColorPalette.FIRE_ORANGE.getColor());
+                    UIStyles.ColorPalette.BG_LIGHTER.getColor());
             g2d.setPaint(bg);
             g2d.fillRect(0, 0, width, height);
 
@@ -53,11 +53,6 @@ public class HeaderPanel extends JPanel {
                     g2d.setColor(new Color(0, 0, 0, 150));
                     g2d.drawImage(logoImage, x + 3, y + 3, scaledWidth, scaledHeight, null);
 
-                    // Draw logo
-                    g2d.setColor(new Color(255, 255, 255, 100));
-                    g2d.setStroke(new BasicStroke(2f));
-                    g2d.drawRect(x - 2, y - 2, scaledWidth + 4, scaledHeight + 4);
-
                     // Draw main logo
                     g2d.drawImage(logoImage, x, y, scaledWidth, scaledHeight, null);
                 }
@@ -68,10 +63,15 @@ public class HeaderPanel extends JPanel {
     public HeaderPanel() {
         Image tempLogo = null;
         try {
-            ImageIcon icon = new ImageIcon("src/assets/logo.gif");
-            tempLogo = icon.getImage();
-        } catch (Exception e) {
-            System.err.println("Could not load logo.gif: " + e.getMessage());
+            tempLogo = new ImageIcon("src/assets/logo.gif").getImage();
+        } catch (Exception gifError) {
+            try {
+                tempLogo = new ImageIcon("src/assets/logo.png").getImage();
+            } catch (Exception pngError) {
+                System.err.println("Could not load logo.gif or logo.png");
+                System.err.println("GIF error: " + gifError.getMessage());
+                System.err.println("PNG error: " + pngError.getMessage());
+            }
         }
         logoImage = tempLogo;
 

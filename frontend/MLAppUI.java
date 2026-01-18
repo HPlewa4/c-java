@@ -20,7 +20,7 @@ public class MLAppUI extends JFrame {
     private java.util.List<UIComponent> components = new java.util.ArrayList<>();
 
     public MLAppUI() {
-        setTitle("Sigma's male detector");
+        setTitle("Zakolak detector");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setSize(900, 700);
         setLocationRelativeTo(null);
@@ -33,16 +33,13 @@ public class MLAppUI extends JFrame {
                 saveSessionAndExit();
             }
         });
+
         try {
-            ImageIcon icon = new ImageIcon("src/assets/logo.gif");
+            ImageIcon icon = new ImageIcon("src/assets/icon3.png");
             setIconImage(icon.getImage());
+
         } catch (Exception e) {
-            try {
-                ImageIcon fallback = new ImageIcon("src/assets/icon.png");
-                setIconImage(fallback.getImage());
-            } catch (Exception ex) {
-                System.err.println("Could not load logo/icon: " + ex.getMessage());
-            }
+            System.err.println("Could not load icon: " + e.getMessage());
         }
 
         initComponents();
