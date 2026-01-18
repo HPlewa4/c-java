@@ -34,20 +34,25 @@ public class MLAppUI extends JFrame {
             }
         });
         try {
-            ImageIcon icon = new ImageIcon("src/assets/icon.png");
+            ImageIcon icon = new ImageIcon("src/assets/logo.gif");
             setIconImage(icon.getImage());
-
         } catch (Exception e) {
-            System.err.println("Could not load icon: " + e.getMessage());
+            try {
+                ImageIcon fallback = new ImageIcon("src/assets/icon.png");
+                setIconImage(fallback.getImage());
+            } catch (Exception ex) {
+                System.err.println("Could not load logo/icon: " + ex.getMessage());
+            }
         }
 
         initComponents();
         loadLastSession();
         setVisible(true);
     }
+
     private void saveSessionAndExit() {
         File outputFile = new File(SESSION_FILE);
-        
+
         if (drawingCanvas.hasImage()) {
             try {
                 ImageIO.write(drawingCanvas.getImage(), "png", outputFile);
@@ -83,7 +88,6 @@ public class MLAppUI extends JFrame {
         }
     }
 
-
     private void initComponents() {
         setLayout(new BorderLayout(0, 0));
         getContentPane().setBackground(UIStyles.ColorPalette.BG_DARK.getColor());
@@ -106,11 +110,13 @@ public class MLAppUI extends JFrame {
         // Canvas
         JPanel canvasPanel = new JPanel(new BorderLayout());
         canvasPanel.setBackground(UIStyles.ColorPalette.BG_DARK.getColor());
-        canvasPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        canvasPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(4, 4, 4, 4, UIStyles.ColorPalette.FIRE_ORANGE.getColor()),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 
-        canvasTitle = new JLabel("Selected file:");
-        canvasTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        canvasTitle.setForeground(UIStyles.ColorPalette.TEXT.getColor());
+        canvasTitle = new JLabel(">>> SELECTED FILE <<<");
+        canvasTitle.setFont(new Font("Impact", Font.BOLD, 16));
+        canvasTitle.setForeground(UIStyles.ColorPalette.FIRE_YELLOW.getColor());
         canvasTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
         drawingCanvas = new DrawingPanel();
@@ -133,10 +139,10 @@ public class MLAppUI extends JFrame {
             component.reset();
         }
     }
+
     private void clearCanvas() {
         resetAll(components);
     }
-
 
     private void selectFile() {
         JFileChooser fileChooser = new JFileChooser();
@@ -195,40 +201,37 @@ public class MLAppUI extends JFrame {
                 // Update UI with result
                 SwingUtilities.invokeLater(() -> {
                     String message = String.format(
-                        "Result: %s (%.1f%% confidence)",
-                        result.label,
-                        result.confidence * 100
-                    );
+                            "Result: %s (%.1f%% confidence)",
+                            result.label,
+                            result.confidence * 100);
                     statusPanel.setStatus(message);
 
                     // Show dialog with detailed results
                     JOptionPane.showMessageDialog(
-                        this,
-                        "<html><body style='width: 300px; padding: 10px;'>" +
-                        "<h2>Classification Result</h2>" +
-                        "<p><b>Prediction:</b> " + result.label + "</p>" +
-                        "<p><b>Confidence:</b> " + String.format("%.2f%%", result.confidence * 100) + "</p>" +
-                        "</body></html>",
-                        "Result",
-                        JOptionPane.INFORMATION_MESSAGE
-                    );
+                            this,
+                            "<html><body style='width: 300px; padding: 10px;'>" +
+                                    "<h2>Classification Result</h2>" +
+                                    "<p><b>Prediction:</b> " + result.label + "</p>" +
+                                    "<p><b>Confidence:</b> " + String.format("%.2f%%", result.confidence * 100) + "</p>"
+                                    +
+                                    "</body></html>",
+                            "Result",
+                            JOptionPane.INFORMATION_MESSAGE);
                 });
 
             } catch (Exception e) {
                 SwingUtilities.invokeLater(() -> {
                     statusPanel.setStatus("Error: " + e.getMessage());
                     JOptionPane.showMessageDialog(
-                        this,
-                        "Failed to classify image:\n" + e.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE
-                    );
+                            this,
+                            "Failed to classify image:\n" + e.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 });
                 e.printStackTrace();
             }
         }).start();
     }
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

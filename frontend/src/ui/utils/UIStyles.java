@@ -4,14 +4,22 @@ import java.awt.*;
 
 public interface UIStyles {
     public enum ColorPalette {
-        BG_DARK(30, 30, 30),
-        BG_DARKER(20, 20, 20),
-        BG_LIGHTER(45, 45, 45),
-        ACCENT_GREEN(46, 204, 113),
-        RED(231, 76, 60),
-        BLUE(52, 152, 219),
-        TEXT(220, 220, 220),
-        BORDER(60, 60, 60);
+        // Fire-inspired palette to match logo.gif
+        BG_DARK(20, 12, 8),
+        BG_DARKER(12, 7, 5),
+        BG_LIGHTER(35, 18, 10),
+        FIRE_RED(255, 64, 32),
+        FIRE_ORANGE(255, 140, 0),
+        FIRE_YELLOW(255, 213, 79),
+        FIRE_GLOW(255, 170, 90),
+        EMBER(180, 70, 40),
+        ASH(60, 45, 40),
+        // Legacy names kept for compatibility
+        ACCENT_GREEN(255, 213, 79),
+        RED(255, 64, 32),
+        BLUE(0, 180, 220),
+        TEXT(255, 240, 220),
+        BORDER(120, 70, 50);
 
         private final Color color;
 
